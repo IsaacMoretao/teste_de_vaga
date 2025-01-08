@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Goal {
-  id                     String   @id @default(uuid())
+  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
   title                  String
   imageUrl               String
   desiredWeeklyFrequency Int
@@ -21,8 +21,8 @@ model Goal {
 }
 
 model GoalCompletion {
-  id        String   @id @default(uuid())
-  goalId    String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  goalId    String   @db.ObjectId
   createdAt DateTime @default(now())
 
   goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)

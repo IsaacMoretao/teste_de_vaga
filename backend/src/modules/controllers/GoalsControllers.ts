@@ -23,18 +23,18 @@ class GoalsControllers {
   async addGoal(req: Request, res: Response) {
     try {
       const { title, desiredWeeklyFrequency } = req.body;
-      const imageFile = req.file; // A imagem estará em req.file
-
-      if (!title && !desiredWeeklyFrequency) {
-        return res.status(500).json({ error: 'É necessário passar os dados da atualização.' });
+      const imageFile = req.file;
+  
+      if (!title || !desiredWeeklyFrequency) {
+        return res.status(400).json({ error: 'É necessário passar os dados da meta.' });
       }
-
-      if (!imageFile){
-        return res.status(500).json({ error: 'É necessário ter uma imagem.' });
+  
+      if (!imageFile) {
+        return res.status(400).json({ error: 'É necessário ter uma imagem.' });
       }
-
+  
       const imageUrl = `/uploads/${imageFile.filename}`;
-
+  
       const newGoal = await prisma.goal.create({
         data: {
           title,
@@ -43,13 +43,14 @@ class GoalsControllers {
           createdAt: new Date(),
         },
       });
-
+  
       return res.status(201).json(newGoal);
     } catch (error) {
-      console.error("Erro ao adicionar meta:", error);
-      return res.status(500).json({ error: "Erro ao adicionar meta." });
+      console.error('Erro ao adicionar meta:', error);
+      return res.status(500).json({ error: 'Erro ao adicionar meta.' });
     }
   }
+  
 
   async updateGoals(req: Request, res: Response) {
     try {
