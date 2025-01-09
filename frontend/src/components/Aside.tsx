@@ -73,7 +73,7 @@ export function Aside() {
           </div>
 
           <div>
-            <label className="text-zinc-400">Imagem (opcional):</label>
+            <label className="text-zinc-400">Imagem:</label>
             <input
               type="file"
               className="mt-2 rounded border-[1px] border-zinc-300 px-4 py-2 bg-black"
