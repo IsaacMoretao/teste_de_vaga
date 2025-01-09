@@ -1,0 +1,16 @@
+-- CreateTable
+CREATE TABLE "Goal" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "desiredWeeklyFrequency" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "GoalCompletion" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "goalId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "GoalCompletion_goalId_fkey" FOREIGN KEY ("goalId") REFERENCES "Goal" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

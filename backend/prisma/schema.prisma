@@ -1,28 +1,53 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
 }
 
+// ### Configuração do mongodb ###  //
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URL")
+// }
+
+// model Goal {
+//   id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+//   title                  String
+//   imageUrl               String
+//   desiredWeeklyFrequency Int
+//   createdAt              DateTime @default(now())
+
+//   goalCompletions GoalCompletion[]
+// }
+
+// model GoalCompletion {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   goalId    String   @db.ObjectId
+//   createdAt DateTime @default(now())
+
+//   goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+// }
+
+// ### Configuração do SQLite ###  //
+
 datasource db {
-  provider = "mongodb"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Goal {
-  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                     String        @id @default(uuid())
   title                  String
   imageUrl               String
   desiredWeeklyFrequency Int
-  createdAt              DateTime @default(now())
+  createdAt              DateTime    @default(now())
 
-  goalCompletions GoalCompletion[]
+  goalCompletions        GoalCompletion[]
 }
 
 model GoalCompletion {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  goalId    String   @db.ObjectId
+  id        String     @id @default(uuid())
+  goalId    String
   createdAt DateTime @default(now())
 
   goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)

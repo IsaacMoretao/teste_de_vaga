@@ -47,7 +47,6 @@ class GoalCompletionController {
         return res.status(500).json({ error: 'Meta não encontrada.' });
       }
   
-      // Verificar se o número de GoalCompletions já atingiu a frequência desejada
       const goalCompletionsCount = await prisma.goalCompletion.count({
         where: { goalId: id }
       });

@@ -4,7 +4,6 @@ import GoalCompletionController from "./modules/controllers/GoalCompletionContro
 import upload from "./config/multerConfig";
 import path from 'path';
 
-// Registrar o fastify-static para servir arquivos da pasta 'assets'
 
 const app = express()
 

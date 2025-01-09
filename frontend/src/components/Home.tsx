@@ -11,6 +11,7 @@ interface Product {
   imageUrl?: string;
   desiredWeeklyFrequency: number;
   createdAt: string;
+  goalCompletions: TypeCompletedGoal[]
 }
 
 interface TypeListCompleteGoal {
@@ -36,7 +37,6 @@ export function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
 
-  // Funções para abrir e fechar o modal
   const handleOpenModal = (product: Product) => {
     setSelectedProduct(product);
     setSelectedFrequency(product.desiredWeeklyFrequency);
@@ -48,7 +48,6 @@ export function Home() {
     setSelectedProduct(null);
   };
 
-  // Função para deletar uma meta
   const handleDeleteGoal = async (id: string) => {
     try {
       const response = await api.delete(`/deleteGoals/${id}`);
@@ -71,7 +70,6 @@ export function Home() {
     }
   };
 
-  // Função para deletar uma conclusão de meta
   const handleDeleteGoalCompletion = async (id: string) => {
     try {
       const response = await api.delete(`/deleteCompleteGoal/${id}`);
@@ -101,7 +99,6 @@ export function Home() {
     }
   };
 
-  // Função para verificar o status de conclusão da meta
   const checkCompletionStatus = (goalId: string, desiredFrequency: number) => {
     if (!listCompleteGoal || !listCompleteGoal.completedGoal) return false;
 
@@ -112,7 +109,6 @@ export function Home() {
     return goalCompletionsCount >= desiredFrequency;
   };
 
-  // Função para agrupar as metas por dia
   const groupCompletedGoalsByDay = (goals: TypeCompletedGoal[]): { [key: string]: TypeCompletedGoal[] } => {
     if (!goals) return {};
 
@@ -127,7 +123,6 @@ export function Home() {
     return groupedGoals;
   };
 
-  // Atualiza `groupedGoals` sempre que `listCompleteGoal` muda
   useEffect(() => {
     if (listCompleteGoal) {
       const grouped = groupCompletedGoalsByDay(listCompleteGoal.completedGoal);
@@ -135,7 +130,6 @@ export function Home() {
     }
   }, [listCompleteGoal]);
 
-  // Função para formatar o intervalo de datas
   const formatDateRange = (start: string, end: string) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -153,29 +147,25 @@ export function Home() {
       : `${startFormatted} a ${endFormatted}`;
   };
 
-  // Função para calcular os dados de conclusão
   const calculateCompletionData = () => {
-    if (!listCompleteGoal) return { completed: 0, total: 0 };
-
-    const totalGoals = listCompleteGoal.completedGoal.reduce((total, item) => {
-      if (item.goal && item.goal.desiredWeeklyFrequency != null) {
-        return total + item.goal.desiredWeeklyFrequency;
-      }
-      return total;
+    if (!products) return { completed: 0, total: 0 };
+  
+    const totalGoals = products.reduce((total, item) => {
+      return total + (item?.desiredWeeklyFrequency || 0);
     }, 0);
-
-    const completedGoals = listCompleteGoal.completedGoal.length;
+  
+    const completedGoals = products.reduce((count, item) => {
+      return count + (item.goalCompletions?.length || 0);
+    }, 0);
+  
     return { completed: completedGoals, total: totalGoals };
   };
-
+  
   const { completed, total } = calculateCompletionData();
-  const percentage = (completed / total) * 100;
-  let formattedPercentage = parseFloat(percentage.toFixed(1));
-  if (isNaN(formattedPercentage)) {
-    formattedPercentage = 0;
-  }
+  const percentage = total > 0 ? (completed / total) * 100 : 0;
+  const formattedPercentage = parseFloat(percentage.toFixed(1));
 
-  // Função para buscar dados da meta
+
   const fetchData = async () => {
     try {
       const response = await api.get<TypeListCompleteGoal>("/listCompleteGoal");
@@ -185,7 +175,6 @@ export function Home() {
     }
   };
 
-  // Função para buscar metas
   const fetchGoal = async () => {
     try {
       const response = await api.get("/listGoals");
@@ -211,7 +200,6 @@ export function Home() {
     }
   };
 
-  // Chama a função de buscar dados quando o componente é montado
   useEffect(() => {
     fetchGoal();
     fetchData();
